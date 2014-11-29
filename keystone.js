@@ -11,25 +11,27 @@ var keystone = require('keystone');
 
 keystone.init({
 
-	'name': 'KeystoneJS',
-	'brand': 'KeystoneJS',
+	'name': 'Safe Secure Group',
+	'brand': 'Safe Secure Group',
 
 	'less': 'public',
-	
+
 	'static': 'public',
 	'favicon': 'public/favicon.ico',
 	'views': 'templates/views',
 	'view engine': 'jade',
-	
+
 	'emails': 'templates/emails',
-	
+
 	'auto update': true,
 	'session': true,
 	'session store': 'mongo',
 	'auth': true,
 	'user model': 'User'
-	
+
 });
+
+keystone.set('cloudinary config', { cloud_name: 'hb6ygkef9', api_key: '815314371377413', api_secret: 'QDZIIlMQqz8prTKdslx42Ns0PjA' });
 
 // Load your project's Models
 
@@ -41,7 +43,7 @@ keystone.import('models');
 // You may want to set it to something private and secure.
 
 if (!keystone.get('cookie secret')) {
-	keystone.set('cookie secret', '----change-me-to-something-secret----');
+	keystone.set('cookie secret', 'kx5cy3LNB7kBcdqxefKRwvMcPmFjVTa4CYJt1ibKJbAB9P7v2RgMHLrvU1wCACc');
 }
 
 // Setup common locals for your templates. The following are required for the
@@ -63,7 +65,7 @@ keystone.set('routes', require('./routes'));
 // default email templates, you may remove them if you're using your own.
 
 // You should ensure you have the EMAIL_HOSTNAME environment variable set on
-// your production / staging servers, or images and links in your emails will 
+// your production / staging servers, or images and links in your emails will
 // default to http://localhost:3000.
 
 var email_hostname = process.env.EMAIL_HOSTNAME || 'localhost:3000';

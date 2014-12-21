@@ -1,29 +1,34 @@
 var keystone = require('keystone'),
-	  Types = keystone.Field.Types;
+    Types = keystone.Field.Types;
 
 var Customer = new keystone.List('Customer', {
-  searchFields: 'name, company, email'
+    map: { name: 'nameAndCompany' },
+    searchFields: 'nameAndCompany, email'
 });
 
 Customer.add({
-  name: { type: Types.Name, required: true, initial: true },
-  company: { type: String },
-  email: { type: Types.Email },
-  address: { type: String },
-  phone: { type: String },
-  keyNumberOne: { type: String },
-  keyNumberTwo: { type: String }
+    customerName: { type: Types.Name, required: true, initial: true },
+    company: { type: String, required: true, initial: true },
+    nameAndCompany: { type: String, hidden: true, initial: false },
+    email: { type: Types.Email },
+    address: { type: String },
+    phone: { type: String },
+    keyNumberOne: { type: String },
+    keyNumberTwo: { type: String }
 });
 
-Customer.schema.add({
-  nameAndCompany: { type: String }
+// Customer.schema.virtual('nameAndCompany').get(function() {
+//     console.log(this);
+//     return
+// });
+
+Customer.schema.pre('save', function(next) {
+    this.nameAndCompany = this.customerName.first + ' ' + this.customerName.last + ' / ' + this.company;
+    next();
 });
 
-Customer.schema.virtual('nameAndCompany', function() {
-  return this.name + ' ' + this.company;
-});
+Customer.relationship({ ref: 'Payment', path: 'customer' });
+// Customer.relationship({ ref: 'ParkingSpot', path: 'customer' });
 
-Customer.relationship({ ref: 'ParkingSpot', path: 'customer' });
-
-Customer.defaultColumns = 'name, company, email';
+Customer.defaultColumns = 'email';
 Customer.register();

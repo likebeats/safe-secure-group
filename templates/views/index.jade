@@ -9,18 +9,21 @@ block content
 
         if user
             p
-                h2 Late Due Payments
+                h3 Late Due Payments
                 p
-                each group in missingPayments
-                    if group.length
-                        .panel.panel-default
-                            .panel-heading
-                                h3.panel-title #{moment(group[0].forDate).format("MMM YYYY")}
-                            .list-group
-                                each item in group
-                                    li.list-group-item
-                                        span.label.label-danger LATE
-                                        | &nbsp;&nbsp; Payment needed from &nbsp;
-                                        a(href='/keystone/customers/' + item.parkingSpot.customer._id, target='_blank') #{item.parkingSpot.customer.nameAndCompany}
-                                        | &nbsp; for parking number: &nbsp;
-                                        a(href='/keystone/parking-spots/' + item.parkingSpot._id, target='_blank') #{item.parkingSpot.parkingNumber}
+                if hasMissingPayments
+                    each group in missingPayments
+                        if group.length
+                            .panel.panel-default
+                                .panel-heading
+                                    h3.panel-title #{moment(group[0].forDate).format("MMM YYYY")}
+                                .list-group
+                                    each item in group
+                                        li.list-group-item
+                                            span.label.label-danger LATE
+                                            | &nbsp;&nbsp; Payment needed from &nbsp;
+                                            a(href='/keystone/customers/' + item.parkingSpot.customer._id, target='_blank') #{item.parkingSpot.customer.nameAndCompany}
+                                            | &nbsp; for parking number: &nbsp;
+                                            a(href='/keystone/parking-spots/' + item.parkingSpot._id, target='_blank') #{item.parkingSpot.parkingNumber}
+                else
+                    | No payments are late due yet.

@@ -8,7 +8,8 @@
         "dotenv": "0.4.0",
         "keystone": "~0.2.29",
         "underscore": "~1.7.0",
-        "moment": "~2.8.4"
+        "moment": "~2.8.4",
+        "fast-csv": "~0.5.4"
     },
     "devDependencies": {
         "gulp": "~3.6.2",

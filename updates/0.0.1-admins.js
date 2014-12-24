@@ -10,8 +10,8 @@
 exports.create = {
 	User: [
 		{ 'name.first': 'Admin', 'name.last': 'User', email: 'user@keystonejs.com', password: 'admin', isAdmin: true }
-	],
-    Customer: [
-        { 'customerName.first': 'Manpreet', 'customerName.last': 'Singh', company: 'company1', email: 'likebeats@gmail.com' }
 	]
+//     Customer: [
+//         { 'customerName.first': 'Manpreet', 'customerName.last': 'Singh', company: 'company1', email: 'likebeats@gmail.com' }
+// 	]
 };

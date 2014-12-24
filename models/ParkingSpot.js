@@ -14,7 +14,7 @@ ParkingSpot.add({
     deposit: { type: Types.Money }
 });
 
-ParkingSpot.relationship({ ref: 'Payment', path: 'parkingNumber' });
+ParkingSpot.relationship({ ref: 'Payment', path: 'parkingSpot' });
 
 ParkingSpot.defaultColumns = 'parkingNumber, customer, monthlyRent, deposit';
 ParkingSpot.register();

@@ -33,6 +33,10 @@ keystone.init({
 
 keystone.set('cloudinary config', { cloud_name: 'hb6ygkef9', api_key: '815314371377413', api_secret: 'QDZIIlMQqz8prTKdslx42Ns0PjA' });
 
+keystone.set('google api key', 'AIzaSyDMoJAyrU2zZ-qrqEBKo1KdZtDkGhS5YoY');
+keystone.set('google server api key', 'AIzaSyDW68N8mygKOZ67eGE8t4t3qJthHmDA1X0');
+keystone.set('default region', 'us');
+
 // Load your project's Models
 
 keystone.import('models');

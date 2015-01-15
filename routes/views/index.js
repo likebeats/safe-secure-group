@@ -53,45 +53,47 @@ exports = module.exports = function(req, res) {
                                     .sort('paymentForYear paymentForMonth')
                                     .exec(function(err, payments)
                 {
-                    var now = new Date();
-                    var startMonth = payments[0].paymentForMonth;
-                    var startYear = payments[0].paymentForYear;
+                    if (payments.length > 0) {
+                        var now = new Date();
+                        var startMonth = payments[0].paymentForMonth;
+                        var startYear = payments[0].paymentForYear;
 
-                    var startDate = new Date();
-                    startDate.setMonth(startMonth);
-                    startDate.setDate(dayOfMonthPaymentsDue);
-                    startDate.setYear(startYear);
+                        var startDate = new Date();
+                        startDate.setMonth(startMonth);
+                        startDate.setDate(dayOfMonthPaymentsDue);
+                        startDate.setYear(startYear);
 
-                    var n = 0;
-                    var i = (now.getDate() > dayOfMonthPaymentsDue) ? now.getMonth() : now.getMonth()-1;
-                    while( startDate < now.setMonth(i) ) {
+                        var n = 0;
+                        var i = (now.getDate() > dayOfMonthPaymentsDue) ? now.getMonth() : now.getMonth()-1;
+                        while( startDate < now.setMonth(i) ) {
 
-                        var lookForMonth = now.getMonth();
-                        var lookForYear = now.getFullYear();
-                        var found = false;
+                            var lookForMonth = now.getMonth();
+                            var lookForYear = now.getFullYear();
+                            var found = false;
 
-                        for (var p = 0; p < payments.length; p++) {
-                            if ((parseInt(payments[p].paymentForYear, 10) == lookForYear) &&
-                                (parseInt(payments[p].paymentForMonth, 10) == lookForMonth)) {
-                                found = true;
+                            for (var p = 0; p < payments.length; p++) {
+                                if ((parseInt(payments[p].paymentForYear, 10) == lookForYear) &&
+                                    (parseInt(payments[p].paymentForMonth, 10) == lookForMonth)) {
+                                    found = true;
+                                    break;
+                                }
+                            }
+
+                            if (!found) {
+                                locals.hasMissingPayments = true;
+                                var item = {
+                                    forDate: new Date(now),
+                                    parkingSpot: parkingSpot
+                                };
+                                locals.missingPayments[lookForMonth + '/' +lookForYear].push(item);
+                            }
+
+                            i -= 1;
+                            n += 1;
+                            if ((n >= numOfMonthsToCheck) || !(startDate < now.setMonth(i))) {
+                                next(err);
                                 break;
                             }
-                        }
-
-                        if (!found) {
-                            locals.hasMissingPayments = true;
-                            var item = {
-                                forDate: new Date(now),
-                                parkingSpot: parkingSpot
-                            };
-                            locals.missingPayments[lookForMonth + '/' +lookForYear].push(item);
-                        }
-
-                        i -= 1;
-                        n += 1;
-                        if ((n >= numOfMonthsToCheck) || !(startDate < now.setMonth(i))) {
-                            next(err);
-                            break;
                         }
                     }
 

@@ -33,7 +33,7 @@ exports = module.exports = function(req, res) {
         d.setMonth(d.getMonth()-1);
     }
 
-    view.on('init', function(next) {
+//     view.on('init', function(next) {
 
 //         ParkingSpot.model.find().where('customer').ne(null)
 //                                 .populate('customer')
@@ -105,7 +105,7 @@ exports = module.exports = function(req, res) {
 
 //         });
 
-    });
+//     });
 
 
     // parkingNumber, KeyCode1, company, fullName, street, city/state, zipCode, phone, email

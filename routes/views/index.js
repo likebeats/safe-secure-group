@@ -35,13 +35,13 @@ exports = module.exports = function(req, res) {
 
     view.on('init', function(next) {
 
-        ParkingSpot.model.find().where('customer').ne(null)
-                                .populate('customer')
-                                .exec(function(err, parkingSpots)
-        {
-            if (err || !parkingSpots.length) {
-                return next(err);
-            }
+//         ParkingSpot.model.find().where('customer').ne(null)
+//                                 .populate('customer')
+//                                 .exec(function(err, parkingSpots)
+//         {
+//             if (err || !parkingSpots.length) {
+//                 return next(err);
+//             }
 
 //             async.each(parkingSpots, function(parkingSpot, next) {
 //             //for (var ps = 0; ps < parkingSpots.length; ps++) {
@@ -103,7 +103,7 @@ exports = module.exports = function(req, res) {
 // 				next(err);
 // 			});
 
-        });
+//         });
 
     });
 

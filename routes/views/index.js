@@ -43,7 +43,7 @@ exports = module.exports = function(req, res) {
                 return next(err);
             }
 
-            async.each(parkingSpots, function(parkingSpot, next) {
+            async.each(parkingSpots, function(parkingSpot, next2) {
             //for (var ps = 0; ps < parkingSpots.length; ps++) {
 
                 //var parkingSpot = parkingSpots[ps];
@@ -91,11 +91,12 @@ exports = module.exports = function(req, res) {
                             i -= 1;
                             n += 1;
                             if ((n >= numOfMonthsToCheck) || !(startDate < now.setMonth(i))) {
-                                next(err);
                                 break;
                             }
                         }
                     }
+
+                    next2(err);
 
                 });
 

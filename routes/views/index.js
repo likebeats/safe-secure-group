@@ -33,80 +33,84 @@ exports = module.exports = function(req, res) {
         d.setMonth(d.getMonth()-1);
     }
 
-    view.on('init', function(next) {
+    if (locals.user) {
 
-        ParkingSpot.model.find().where('customer').ne(null)
-                                .populate('customer')
-                                .exec(function(err, parkingSpots)
-        {
-            if (err || !parkingSpots.length) {
-                return next(err);
-            }
+        view.on('init', function(next) {
 
-            async.each(parkingSpots, function(parkingSpot, next2) {
-            //for (var ps = 0; ps < parkingSpots.length; ps++) {
+            ParkingSpot.model.find().where('customer').ne(null)
+                                    .populate('customer')
+                                    .exec(function(err, parkingSpots)
+            {
+                if (err || !parkingSpots.length) {
+                    return next(err);
+                }
 
-                //var parkingSpot = parkingSpots[ps];
+                async.each(parkingSpots, function(parkingSpot, next2) {
+                //for (var ps = 0; ps < parkingSpots.length; ps++) {
 
-                Payment.model.find().where('parkingSpot').equals(parkingSpot._id)
-                                    .where('customer').equals(parkingSpot.customer)
-                                    .sort('paymentForYear paymentForMonth')
-                                    .exec(function(err, payments)
-                {
-                    if (payments.length > 0) {
-                        var now = new Date();
-                        var startMonth = payments[0].paymentForMonth;
-                        var startYear = payments[0].paymentForYear;
+                    //var parkingSpot = parkingSpots[ps];
 
-                        var startDate = new Date();
-                        startDate.setMonth(startMonth);
-                        startDate.setDate(dayOfMonthPaymentsDue);
-                        startDate.setYear(startYear);
+                    Payment.model.find().where('parkingSpot').equals(parkingSpot._id)
+                                        .where('customer').equals(parkingSpot.customer)
+                                        .sort('paymentForYear paymentForMonth')
+                                        .exec(function(err, payments)
+                    {
+                        if (payments.length > 0) {
+                            var now = new Date();
+                            var startMonth = payments[0].paymentForMonth;
+                            var startYear = payments[0].paymentForYear;
 
-                        var n = 0;
-                        var i = (now.getDate() > dayOfMonthPaymentsDue) ? now.getMonth() : now.getMonth()-1;
-                        while( startDate < now.setMonth(i) ) {
+                            var startDate = new Date();
+                            startDate.setMonth(startMonth);
+                            startDate.setDate(dayOfMonthPaymentsDue);
+                            startDate.setYear(startYear);
 
-                            var lookForMonth = now.getMonth();
-                            var lookForYear = now.getFullYear();
-                            var found = false;
+                            var n = 0;
+                            var i = (now.getDate() > dayOfMonthPaymentsDue) ? now.getMonth() : now.getMonth()-1;
+                            while( startDate < now.setMonth(i) ) {
 
-                            for (var p = 0; p < payments.length; p++) {
-                                if ((parseInt(payments[p].paymentForYear, 10) == lookForYear) &&
-                                    (parseInt(payments[p].paymentForMonth, 10) == lookForMonth)) {
-                                    found = true;
+                                var lookForMonth = now.getMonth();
+                                var lookForYear = now.getFullYear();
+                                var found = false;
+
+                                for (var p = 0; p < payments.length; p++) {
+                                    if ((parseInt(payments[p].paymentForYear, 10) == lookForYear) &&
+                                        (parseInt(payments[p].paymentForMonth, 10) == lookForMonth)) {
+                                        found = true;
+                                        break;
+                                    }
+                                }
+
+                                if (!found) {
+                                    locals.hasMissingPayments = true;
+                                    var item = {
+                                        forDate: new Date(now),
+                                        parkingSpot: parkingSpot
+                                    };
+                                    locals.missingPayments[lookForMonth + '/' +lookForYear].push(item);
+                                }
+
+                                i -= 1;
+                                n += 1;
+                                if ((n >= numOfMonthsToCheck) || !(startDate < now.setMonth(i))) {
                                     break;
                                 }
                             }
-
-                            if (!found) {
-                                locals.hasMissingPayments = true;
-                                var item = {
-                                    forDate: new Date(now),
-                                    parkingSpot: parkingSpot
-                                };
-                                locals.missingPayments[lookForMonth + '/' +lookForYear].push(item);
-                            }
-
-                            i -= 1;
-                            n += 1;
-                            if ((n >= numOfMonthsToCheck) || !(startDate < now.setMonth(i))) {
-                                break;
-                            }
                         }
-                    }
 
-                    next2(err);
+                        next2(err);
 
+                    });
+
+                }, function(err) {
+                    next(err);
                 });
 
-            }, function(err) {
-				next(err);
-			});
+            });
 
         });
 
-    });
+    }
 
 
     // parkingNumber, KeyCode1, company, fullName, street, city/state, zipCode, phone, email

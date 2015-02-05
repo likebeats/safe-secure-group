@@ -25,5 +25,5 @@ Customer.schema.pre('save', function(next) {
 Customer.relationship({ ref: 'Payment', path: 'customer' });
 // Customer.relationship({ ref: 'ParkingSpot', path: 'customer' });
 
-Customer.defaultColumns = 'email, address';
+Customer.defaultColumns = 'phone, address';
 Customer.register();

@@ -1,6 +1,7 @@
 var keystone = require('keystone'),
     Types = keystone.Field.Types,
     moment = require('moment');
+    ParkingSpot = keystone.list('ParkingSpot');
 
 var Payment = new keystone.List('Payment', {
     map: { name: 'paymentDate' },
@@ -22,15 +23,26 @@ var monthNames = [ { value: 0, label: "January" },
 
 Payment.add({
     paymentDate: { type: Types.Date, format: 'MMM DD, YYYY', default: Date.now, initial: false, required: true },
-    parkingSpot: { type: Types.Relationship, ref: 'ParkingSpot', required: true, initial: true },
-    customer: { type: Types.Relationship, ref: 'Customer', required: true, initial: true },
-    paymentForMonth: { type: Types.Select, numeric: true, options: monthNames, /*default: moment().format("MMMM"),*/ emptyOption: true, required: true, initial: true },
+    parkingSpot: { type: Types.Relationship, ref: 'ParkingSpot', required: true, initial: true /*, filters: { customer: ':customer' }*/ },
+    customer: { type: Types.Relationship, ref: 'Customer', required: false, initial: false },
+    paymentForMonth: { type: Types.Select, numeric: true, default: moment().format("M")-1, options: monthNames, emptyOption: true, required: false, initial: true },
     paymentForYear: { type: Types.Number, format: false, default: new Date().getFullYear(), required: true, initial: true },
     paymentAmount: { type: Types.Money, required: true, initial: true },
     paymentMethod: { type: Types.Select, options: 'check, cash', default: 'check', emptyOption: false },
     checkNumber: { type: String, dependsOn: { paymentMethod: 'check' } },
     lateFeeAmount: { type: Types.Money }
 });
+
+
+Payment.schema.pre('save', function(next) {
+
+    var payment = this;
+    ParkingSpot.model.findOne().where('_id').equals(this.parkingSpot).exec(function(err, spot) {
+        payment.customer = spot.customer;
+        next();
+    });
+
+})
 
 Payment.defaultColumns = 'paymentDate, parkingSpot, customer, paymentForMonth, paymentForYear, paymentAmount';
 Payment.register();
